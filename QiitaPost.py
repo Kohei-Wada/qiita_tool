@@ -6,11 +6,11 @@ class QiitaPost:
         self.rendered_body = rendered_body
         self.body = body
         self.coediting = coediting
-        self.comments_count = comments_count
+        self.comments_count = int(comments_count)
         self.created_at = created_at
         self.group = group
         self.id = comment_id
-        self.likes_count = likes_count
+        self.likes_count = int(likes_count)
         self.private = private
         self.reactions_count = reactions_count
         self.tags = tags
@@ -29,3 +29,9 @@ class QiitaPost:
 
     def get_url(self):
         return self.url
+
+    def get_likes_count(self):
+        return self.likes_count
+
+    def get_tag(self):
+        return self.tags

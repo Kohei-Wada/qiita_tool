@@ -1,7 +1,6 @@
 import json
 import requests
 
-from collections import namedtuple
 from decoders import *
 
 
@@ -172,7 +171,7 @@ class QiitaAPI:
         if res.status_code == self.rate_limit:
             return None
         for data in res.json():
-            users.append(namedtuple("QiitaUser", data.keys())(*data.values()))
+            users.append(qiita_user_decoder(data))
         return users
 
     """
@@ -188,7 +187,7 @@ class QiitaAPI:
     """
     get the list of qiita user objects that the user is following.
     """
-    def get_followees(self, user_id, page=1, per_page=100):
+    def get_followees(self, user_id, page=1, per_page=20):
         followees = []
         res = requests.get(self.qiita + "users/" + user_id + "/followees?" +
                            "page=" + str(page) + "&" + "per_page=" + str(per_page))
@@ -201,7 +200,7 @@ class QiitaAPI:
     """
     get the list of user object who are following the users.
     """
-    def get_followers(self, user_id, page, per_page):
+    def get_followers(self, user_id, page=1, per_page=20):
         followers = []
         res = requests.get(self.qiita + "users/" + user_id + "/followers?" +
                            "page=" + str(page) + "&" + "per_page" + str(per_page))
@@ -218,7 +217,6 @@ class QiitaAPI:
     def unfollow(self, user_id):
         res = requests.delete(self.qiita + "users/" + user_id + "/following")
         return res.status_code == self.success
-
 
     def is_following(self):
         return
