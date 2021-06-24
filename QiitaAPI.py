@@ -4,7 +4,7 @@ from decoder import qiita_user_decoder
 from collections import namedtuple
 
 
-# this class is wrapper for qiita api
+# this class is wrapper for Qiita API
 
 
 class QiitaAPI:
@@ -70,9 +70,12 @@ class QiitaAPI:
     # get a list of all users in descending
     # order of creation date and time.
     def get_users(self, page=1, per_page=20):
+        users = []
         res = requests.get(self.qiita + "users?" +
-                           "page=" + str(page) + "&" + "per_page=" + str(per_page))
-        return res.json()
+                           "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
+        for data in res:
+            users.append(namedtuple("QiitaUser", data.keys())(*data.values()))
+        return users
 
     # get the qiita user object.
     def get_user(self, user_id):
@@ -80,9 +83,10 @@ class QiitaAPI:
                           object_hook=qiita_user_decoder)
 
     # get the list of qiita user objects that the user is following
-    def get_followees(self, user_id):
+    def get_followees(self, user_id, page=1, per_page=100):
         followees = []
-        res = requests.get(self.qiita + "users/" + user_id + "/followees").json()
+        res = requests.get(self.qiita + "users/" + user_id + "/followees?" +
+                           "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
 
         for data in res:
             followees.append(namedtuple("QiitaUser", data.keys())(*data.values()))

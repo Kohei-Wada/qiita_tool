@@ -4,11 +4,10 @@ from QiitaAPI import *
 def main():
     my_id = "program3152019"
     q = QiitaAPI()
-    followees = q.get_followees(my_id)
+    users = q.get_followees("drken", page=1, per_page=100)
 
-    for i in followees:
-        print(f'name : {i.name}, github : {i.github_login_name}')
-
+    for user in users:
+        print(f"user id : {user.id}, github: {user.github_login_name}")
 
 
 if __name__ == '__main__':
