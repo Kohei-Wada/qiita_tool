@@ -4,7 +4,7 @@ from QiitaAPI import *
 def main():
     my_id = "program3152019"
     q = QiitaAPI()
-    res = q.get_user_items(my_id)
+    res = q.get_followees(my_id)
     print(res)
 
 

@@ -9,6 +9,11 @@ class QiitaAPI:
         self.success = 204
 
     # LGTM
+
+    # get a list of "LGTM!" that attached article in descending order
+    def get_item_lgtm(self, item_id):
+        return requests.get(self.qiita + "items/" + item_id + "/likes").json()
+
     # ACCESS TOKEN
     # GROUP
 
@@ -24,9 +29,26 @@ class QiitaAPI:
         res = requests.get(self.qiita + "comments/" + comment_id)
         return json.loads(res.text)
 
+    def get_item_comments(self, item_id):
+        return requests.get(self.qiita + "items/" + item_id + "/comments")
+
     # TAGGING
 
     # TAG
+    # get the list of tags that is followed by user
+    def get_following_tags(self, user_id, page=1, per_page=20):
+        return requests.get(self.qiita + "users/" + user_id + "/following_tags?" +
+                            "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
+
+    # unfollow the tag, if successful return true
+    def unfollow_tag(self, tag_id):
+        res = requests.delete(self.qiita + "tags/" + tag_id + "/following")
+        return res.status_code == self.success
+
+    # follow the tag
+    def follow_tage(self, tag_id):
+        res = requests.put(self.qiita + "tags/" + tag_id + "following")
+        return res.status_code == self.success
 
     # TEAM
 
@@ -34,13 +56,15 @@ class QiitaAPI:
 
     # USER
 
-    # get a list of users who have stocked articles int descending order of stock date and time
+    # get a list of users who have stocked articles
+    # in descending order of stock date and time
     def get_stockers(self, item_id, page=1, per_page=20):
         res = requests.get(self.qiita + "items/" + item_id + "/stockers?" +
                            "page=" + str(page) + "&" + "per_page=" + str(per_page))
         return json.loads(res.text)
 
-    # get a list of all users in descending order of creation date and time.
+    # get a list of all users in descending
+    # order of creation date and time.
     def get_users(self, page=1, per_page=20):
         res = requests.get(self.qiita + "users?" +
                            "page=" + str(page) + "&" + "per_page=" + str(per_page))
@@ -73,11 +97,13 @@ class QiitaAPI:
 
     # POST : represents a post from a user
 
-    # get a list of articles in descending order of creation date and time
+    # get a list of articles in descending
+    # order of creation date and time
     def get_items(self, user_id, page=1, per_page=100):
         return
 
-    # get the article list of the specified user in descending order of creation date and time
+    # get the article list of the specified user
+    # in descending order of creation date and time
     def get_user_items(self, user_id, page=1, per_page=20):
         return requests.get(self.qiita + "users/" + user_id +
                             "/items?" + "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
