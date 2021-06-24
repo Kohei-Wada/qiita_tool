@@ -19,6 +19,7 @@ class QiitaAPI:
         return requests.get(self.qiita + "items/" + item_id + "/likes").json()
 
     # ACCESS TOKEN
+
     # GROUP
 
     # COMMENT
@@ -87,16 +88,18 @@ class QiitaAPI:
         followees = []
         res = requests.get(self.qiita + "users/" + user_id + "/followees?" +
                            "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
-
         for data in res:
             followees.append(namedtuple("QiitaUser", data.keys())(*data.values()))
-
         return followees
 
     # get a list of users who are following users.
     def get_followers(self, user_id, page, per_page):
-        return requests.get(self.qiita + "users/" + user_id + "/followers?" +
-                            "page=" + str(page) + "&" + "per_page" + str(per_page)).json()
+        followers = []
+        res = requests.get(self.qiita + "users/" + user_id + "/followers?" +
+                           "page=" + str(page) + "&" + "per_page" + str(per_page)).json()
+        for data in res:
+            followers.append(namedtuple("QiitaUser", data.keys())(*data.values()))
+        return followers
 
     # unfollow the user, return true if successful
     def unfollow(self, user_id):
@@ -107,8 +110,10 @@ class QiitaAPI:
     def is_following(self):
         return
 
+    # follow the user. if success return true
     def follow(self, user_id):
-        requests.put(self.qiita + "users/" + user_id + "/following")
+        res = requests.put(self.qiita + "users/" + user_id + "/following")
+        return res.status_code == self.success
 
     # POST : represents a post from a user
 
