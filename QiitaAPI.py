@@ -19,9 +19,19 @@ class QiitaAPI:
     ##################################################################################################################
     # LGTM
 
-    # get a list of "LGTM!" that attached article in descending order
+    """
+    get a list of "LGTM!" that attached article in descending order
+    """
     def get_item_lgtm(self, item_id):
-        return requests.get(self.qiita + "items/" + item_id + "/likes").json()
+        lgtms = []
+        res = requests.get(self.qiita + "items/" + item_id + "/likes")
+        if res.status_code == self.rate_limit:
+            return None
+
+        for data in res.json():
+            lgtms.append(qiita_lgtm_decoder(data))
+
+        return res
 
     ##################################################################################################################
     # ACCESS TOKEN
@@ -31,13 +41,16 @@ class QiitaAPI:
 
     ##################################################################################################################
     # COMMENT
-
-    # delete the comment
+    """
+    delete the comment
+    """
     def delete_comment(self, comment_id):
         requests.delete(self.qiita + "comments/" + comment_id)
         return
 
-    # get a comment
+    """
+    get a comment object
+    """
     def get_comment(self, comment_id):
         res = requests.get(self.qiita + "comments/" + comment_id)
 
@@ -46,6 +59,9 @@ class QiitaAPI:
 
         return json.loads(res.text, object_hook=qiita_comment_decoder)
 
+    """
+    get the list of comment object attached to item.
+    """
     def get_item_comments(self, item_id):
         comments = []
         res = requests.get(self.qiita + "items/" + item_id + "/comments")
@@ -63,7 +79,36 @@ class QiitaAPI:
 
     ##################################################################################################################
     # TAG
-    # get the list of tags that is followed by user
+
+    """
+    get the tag object list in descending order 
+    of creation date and time.
+    """
+    def get_all_tags(self, page=1, per_page=20):
+        tags = []
+        res = requests.get(self.qiita + "tags?" +
+                           "page=" + str(page) + "&" + "per_page=" + str(per_page))
+        if res.status_code == self.rate_limit:
+            return None
+
+        for data in res.json():
+            tags.append(qiita_tag_decoder(data))
+
+        return tags
+
+    """
+    get the tag object.
+    """
+    def get_tag(self, tag_id):
+        res = requests.get(self.qiita + "tags/" + tag_id)
+        if res.status_code == self.rate_limit:
+            return None
+
+        return json.loads(res.text, object_hook=qiita_tag_decoder)
+
+    """
+    get the list of tag object that is followd by user
+    """
     def get_following_tags(self, user_id, page=1, per_page=20):
         tags = []
         res = requests.get(self.qiita + "users/" + user_id + "/following_tags?" +
@@ -77,7 +122,9 @@ class QiitaAPI:
 
         return tags
 
-    # unfollow the tag, if successful return true
+    """
+    unfollow the tag. if successful, return true.
+    """
     def unfollow_tag(self, tag_id):
         res = requests.delete(self.qiita + "tags/" + tag_id + "/following")
         return res.status_code == self.success
@@ -96,8 +143,10 @@ class QiitaAPI:
     ##################################################################################################################
     # USER
 
-    # get a list of users who have stocked articles
-    # in descending order of stock date and time
+    """
+    get the list of users who have stacked articles 
+    in descending order of stack date and time.
+    """
     def get_stockers(self, item_id, page=1, per_page=20):
         stockers = []
         res = requests.get(self.qiita + "items/" + item_id + "/stockers?" +
@@ -111,8 +160,10 @@ class QiitaAPI:
 
         return stockers
 
-    # get a list of all users in descending
-    # order of creation date and time.
+    """
+    get the list of all user object in descending order
+    of creation date and time.
+    """
     def get_users(self, page=1, per_page=20):
         users = []
         res = requests.get(self.qiita + "users?" +
@@ -124,7 +175,9 @@ class QiitaAPI:
             users.append(namedtuple("QiitaUser", data.keys())(*data.values()))
         return users
 
-    # get the qiita user object.
+    """
+    get the qiita user object.
+    """
     def get_user(self, user_id):
         res = requests.get(self.qiita + "users/" + user_id)
         if res.status_code == self.rate_limit:
@@ -132,7 +185,9 @@ class QiitaAPI:
 
         return json.loads(res.text, object_hook=qiita_user_decoder)
 
-    # get the list of qiita user objects that the user is following
+    """
+    get the list of qiita user objects that the user is following.
+    """
     def get_followees(self, user_id, page=1, per_page=100):
         followees = []
         res = requests.get(self.qiita + "users/" + user_id + "/followees?" +
@@ -143,7 +198,9 @@ class QiitaAPI:
             followees.append(qiita_user_decoder(data))
         return followees
 
-    # get a list of users who are following users.
+    """
+    get the list of user object who are following the users.
+    """
     def get_followers(self, user_id, page, per_page):
         followers = []
         res = requests.get(self.qiita + "users/" + user_id + "/followers?" +
@@ -155,16 +212,20 @@ class QiitaAPI:
             followers.append(qiita_user_decoder(data))
         return followers
 
-    # unfollow the user, return true if successful
+    """
+    unfollowing the user, if successful, return true.
+    """
     def unfollow(self, user_id):
         res = requests.delete(self.qiita + "users/" + user_id + "/following")
         return res.status_code == self.success
 
-    # return true if you are following the user.
+
     def is_following(self):
         return
 
-    # follow the user. if success return true
+    """
+    follow the user. if success, return true.
+    """
     def follow(self, user_id):
         res = requests.put(self.qiita + "users/" + user_id + "/following")
         return res.status_code == self.success
@@ -172,8 +233,10 @@ class QiitaAPI:
     ##################################################################################################################
     # POST(ITEM) : represents a post from a user
 
-    # get a list of articles in descending
-    # order of creation date and time
+    """
+    get the list of article object in descending order
+    of creation date and time.
+    """
     def get_items(self, page=1, per_page=100):
         items = []
         res = requests.get(self.qiita + "items?" +
@@ -186,8 +249,10 @@ class QiitaAPI:
 
         return items
 
-    # get the article list of the specified user
-    # in descending order of creation date and time
+    """
+    get the article object list of the specified user
+    in descending order of creation date and time
+    """
     def get_user_items(self, user_id, page=1, per_page=20):
         items = []
         res = requests.get(self.qiita + "users/" + user_id +

@@ -2,6 +2,7 @@ from QiitaUser import QiitaUser
 from QiitaComment import QiitaComment
 from QiitaPost import QiitaPost
 from QiitaTag import QiitaTag
+from QiitaLGTM import QiitaLGTM
 
 
 def qiita_user_decoder(obj):
@@ -57,3 +58,8 @@ def qiita_post_decoder(obj):
                      qiita_user_decoder(obj['user']),
                      obj['page_views_count'],
                      obj['team_membership'])
+
+
+def qiita_lgtm_decoder(obj):
+    return QiitaLGTM(obj['created_at'],
+                     qiita_user_decoder(obj['user']))
