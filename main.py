@@ -1,13 +1,14 @@
 from QiitaAPI import *
-from QiitaUser import *
 
 
 def main():
     my_id = "program3152019"
-    test_id = "fkooo"
     q = QiitaAPI()
-    res = q.get_user(my_id)
-    print(res.has_github_account())
+    followees = q.get_followees(my_id)
+
+    for i in followees:
+        print(f'name : {i.name}, github : {i.github_login_name}')
+
 
 
 if __name__ == '__main__':

@@ -1,28 +1,12 @@
 import json
 import requests
-from QiitaUser import *
-
-
-def qiita_user_decoder(obj):
-    return QiitaUser(obj['description'],
-                     obj['facebook_id'],
-                     obj['followees_count'],
-                     obj['followers_count'],
-                     obj['github_login_name'],
-                     obj['id'],
-                     obj['items_count'],
-                     obj['linkedin_id'],
-                     obj['location'],
-                     obj['name'],
-                     obj['organization'],
-                     obj['permanent_id'],
-                     obj['profile_image_url'],
-                     obj['team_only'],
-                     obj['twitter_screen_name'],
-                     obj['website_url'])
+from decoder import qiita_user_decoder
+from collections import namedtuple
 
 
 # this class is wrapper for qiita api
+
+
 class QiitaAPI:
     def __init__(self):
         self.qiita = "https://qiita.com/api/v2/"
@@ -95,9 +79,15 @@ class QiitaAPI:
         return json.loads(requests.get(self.qiita + "users/" + user_id).text,
                           object_hook=qiita_user_decoder)
 
-    # get the list of users that the user is following
+    # get the list of qiita user objects that the user is following
     def get_followees(self, user_id):
-        return requests.get(self.qiita + "users/" + user_id + "/followees").json()
+        followees = []
+        res = requests.get(self.qiita + "users/" + user_id + "/followees").json()
+
+        for data in res:
+            followees.append(namedtuple("QiitaUser", data.keys())(*data.values()))
+
+        return followees
 
     # get a list of users who are following users.
     def get_followers(self, user_id, page, per_page):
