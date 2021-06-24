@@ -88,8 +88,9 @@ class QiitaAPI:
         followees = []
         res = requests.get(self.qiita + "users/" + user_id + "/followees?" +
                            "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
+
         for data in res:
-            followees.append(namedtuple("QiitaUser", data.keys())(*data.values()))
+            followees.append(qiita_user_decoder(data))
         return followees
 
     # get a list of users who are following users.
@@ -98,7 +99,7 @@ class QiitaAPI:
         res = requests.get(self.qiita + "users/" + user_id + "/followers?" +
                            "page=" + str(page) + "&" + "per_page" + str(per_page)).json()
         for data in res:
-            followers.append(namedtuple("QiitaUser", data.keys())(*data.values()))
+            followers.append(qiita_user_decoder(data))
         return followers
 
     # unfollow the user, return true if successful

@@ -3,7 +3,6 @@ class QiitaUser:
     def __init__(self, description, facebook_id, followers_count, followees_count,
                  github_login_name, user_id, items_count, linkedin_id, location, name, organization,
                  permanent_id, profile_image_url, team_only, twitter_screen_name, website_url):
-
         self.description = description  # self introduction
         self.facebook_id = facebook_id  # Facebook ID
         self.followers_count = int(followers_count)  # number of users this user is following
@@ -21,6 +20,14 @@ class QiitaUser:
         self.twitter_screen_name = twitter_screen_name  # Twitter screen name
         self.website_url = website_url  # URL of the website the user set
 
-    # if the user set github account return true
+    def get_id(self):
+        return self.id
+
+    def get_github_url(self):
+        return f"https://github.com/{self.github_login_name}"
+
     def has_github_account(self):
         return self.github_login_name is not None
+
+    def get_item_count(self):
+        return self.items_count

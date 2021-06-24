@@ -18,4 +18,3 @@ def qiita_user_decoder(obj):
                      obj['team_only'],
                      obj['twitter_screen_name'],
                      obj['website_url'])
-
