@@ -1,16 +1,9 @@
-from QiitaAPI import *
+from QiitaAPI import QiitaAPI 
 
 
 def main():
     q = QiitaAPI()
-    users = q.get_followees("drken")
-
-
-
-    for user in users:
-        print(user.has_github_account())
-
-
+    user = q.get_user("drken")
 
 
 if __name__ == '__main__':

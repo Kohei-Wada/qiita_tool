@@ -24,7 +24,10 @@ class QiitaUser:
         return self.id
 
     def get_github_url(self):
-        return f"https://github.com/{self.github_login_name}"
+        if self.has_github_account():
+            return f"https://github.com/{self.github_login_name}"
+        else:
+            return None
 
     def has_github_account(self):
         return self.github_login_name is not None

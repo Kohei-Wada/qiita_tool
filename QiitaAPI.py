@@ -1,16 +1,24 @@
 import json
 import requests
-from decoder import qiita_user_decoder
+
 from collections import namedtuple
+from decoders import qiita_tag_decoder
+from decoders import qiita_user_decoder
+from decoders import qiita_post_decoder
+from decoders import qiita_comment_decoder
 
 
 # this class is wrapper for Qiita API
 
 
+#TODO add rate limit code
 class QiitaAPI:
     def __init__(self):
         self.qiita = "https://qiita.com/api/v2/"
+        self.ok = 200
+        self.created = 201
         self.success = 204
+        self.rate_limit = 403
 
     # LGTM
 
@@ -31,19 +39,29 @@ class QiitaAPI:
 
     # get a comment
     def get_comment(self, comment_id):
-        res = requests.get(self.qiita + "comments/" + comment_id)
-        return json.loads(res.text)
+        return json.loads(requests.get(self.qiita + "comments/" + comment_id).text, object_hook=qiita_comment_decoder)
 
     def get_item_comments(self, item_id):
-        return requests.get(self.qiita + "items/" + item_id + "/comments")
+        comments = []
+        res = requests.get(self.qiita + "items/" + item_id + "/comments").json()
+        for data in res:
+            comments.append(qiita_comment_decoder(data))
+
+        return comments
 
     # TAGGING
 
     # TAG
     # get the list of tags that is followed by user
     def get_following_tags(self, user_id, page=1, per_page=20):
-        return requests.get(self.qiita + "users/" + user_id + "/following_tags?" +
-                            "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
+        tags = []
+        res = requests.get(self.qiita + "users/" + user_id + "/following_tags?" +
+                           "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
+
+        for data in res:
+            tags.append(qiita_tag_decoder(data))
+
+        return tags
 
     # unfollow the tag, if successful return true
     def unfollow_tag(self, tag_id):
@@ -51,7 +69,7 @@ class QiitaAPI:
         return res.status_code == self.success
 
     # follow the tag
-    def follow_tage(self, tag_id):
+    def follow_tag(self, tag_id):
         res = requests.put(self.qiita + "tags/" + tag_id + "following")
         return res.status_code == self.success
 
@@ -80,7 +98,10 @@ class QiitaAPI:
 
     # get the qiita user object.
     def get_user(self, user_id):
-        return json.loads(requests.get(self.qiita + "users/" + user_id).text,
+        res = requests.get(self.qiita + "users/" + user_id)
+        print(res.status_code)
+
+        return json.loads(
                           object_hook=qiita_user_decoder)
 
     # get the list of qiita user objects that the user is following
@@ -120,11 +141,23 @@ class QiitaAPI:
 
     # get a list of articles in descending
     # order of creation date and time
-    def get_items(self, user_id, page=1, per_page=100):
-        return
+    def get_items(self, page=1, per_page=100):
+        items = []
+        res = requests.get(self.qiita + "items?" +
+                           "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
+        for data in res:
+            items.append(qiita_post_decoder(data))
+
+        return items
 
     # get the article list of the specified user
     # in descending order of creation date and time
     def get_user_items(self, user_id, page=1, per_page=20):
-        return requests.get(self.qiita + "users/" + user_id +
-                            "/items?" + "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
+        items = []
+        res = requests.get(self.qiita + "users/" + user_id +
+                           "/items?" + "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
+
+        for data in res:
+            items.append(qiita_post_decoder(data))
+
+        return items
