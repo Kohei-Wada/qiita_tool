@@ -1,5 +1,25 @@
 import json
 import requests
+from QiitaUser import *
+
+
+def qiita_user_decoder(obj):
+    return QiitaUser(obj['description'],
+                     obj['facebook_id'],
+                     obj['followees_count'],
+                     obj['followers_count'],
+                     obj['github_login_name'],
+                     obj['id'],
+                     obj['items_count'],
+                     obj['linkedin_id'],
+                     obj['location'],
+                     obj['name'],
+                     obj['organization'],
+                     obj['permanent_id'],
+                     obj['profile_image_url'],
+                     obj['team_only'],
+                     obj['twitter_screen_name'],
+                     obj['website_url'])
 
 
 # this class is wrapper for qiita api
@@ -70,9 +90,10 @@ class QiitaAPI:
                            "page=" + str(page) + "&" + "per_page=" + str(per_page))
         return res.json()
 
-    # get the user.
+    # get the qiita user object.
     def get_user(self, user_id):
-        return requests.get(self.qiita + user_id).json()
+        return json.loads(requests.get(self.qiita + "users/" + user_id).text,
+                          object_hook=qiita_user_decoder)
 
     # get the list of users that the user is following
     def get_followees(self, user_id):
