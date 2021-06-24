@@ -11,7 +11,6 @@ from decoders import qiita_comment_decoder
 # this class is wrapper for Qiita API
 
 
-#TODO add rate limit code
 class QiitaAPI:
     def __init__(self):
         self.qiita = "https://qiita.com/api/v2/"
@@ -91,26 +90,30 @@ class QiitaAPI:
     def get_users(self, page=1, per_page=20):
         users = []
         res = requests.get(self.qiita + "users?" +
-                           "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
-        for data in res:
+                           "page=" + str(page) + "&" + "per_page=" + str(per_page))
+
+        if res.status_code == self.rate_limit:
+            return None
+        for data in res.json():
             users.append(namedtuple("QiitaUser", data.keys())(*data.values()))
         return users
 
     # get the qiita user object.
     def get_user(self, user_id):
         res = requests.get(self.qiita + "users/" + user_id)
-        print(res.status_code)
+        if res.status_code == self.rate_limit:
+            return None
 
-        return json.loads(
-                          object_hook=qiita_user_decoder)
+        return json.loads(res.text, object_hook=qiita_user_decoder)
 
     # get the list of qiita user objects that the user is following
     def get_followees(self, user_id, page=1, per_page=100):
         followees = []
         res = requests.get(self.qiita + "users/" + user_id + "/followees?" +
-                           "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
-
-        for data in res:
+                           "page=" + str(page) + "&" + "per_page=" + str(per_page))
+        if res.status_code == self.rate_limit:
+            return None
+        for data in res.json():
             followees.append(qiita_user_decoder(data))
         return followees
 
@@ -118,8 +121,11 @@ class QiitaAPI:
     def get_followers(self, user_id, page, per_page):
         followers = []
         res = requests.get(self.qiita + "users/" + user_id + "/followers?" +
-                           "page=" + str(page) + "&" + "per_page" + str(per_page)).json()
-        for data in res:
+                           "page=" + str(page) + "&" + "per_page" + str(per_page))
+
+        if res.status_code == self.rate_limit:
+            return None
+        for data in res.json():
             followers.append(qiita_user_decoder(data))
         return followers
 
@@ -144,8 +150,11 @@ class QiitaAPI:
     def get_items(self, page=1, per_page=100):
         items = []
         res = requests.get(self.qiita + "items?" +
-                           "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
-        for data in res:
+                           "page=" + str(page) + "&" + "per_page=" + str(per_page))
+        if res.status_code == self.rate_limit:
+            return None
+
+        for data in res.json():
             items.append(qiita_post_decoder(data))
 
         return items
@@ -155,9 +164,12 @@ class QiitaAPI:
     def get_user_items(self, user_id, page=1, per_page=20):
         items = []
         res = requests.get(self.qiita + "users/" + user_id +
-                           "/items?" + "page=" + str(page) + "&" + "per_page=" + str(per_page)).json()
+                           "/items?" + "page=" + str(page) + "&" + "per_page=" + str(per_page))
 
-        for data in res:
+        if res.status_code == self.rate_limit:
+            return None
+
+        for data in res.json():
             items.append(qiita_post_decoder(data))
 
         return items
