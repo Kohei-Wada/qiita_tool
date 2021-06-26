@@ -5,6 +5,9 @@ class QiitaTag:
         self.id = tag_id
         self.items_count = int(items_count)
 
+    ###################################################################################################################
+    # getter
+
     def get_followers_count(self):
         return self.followers_count
 
