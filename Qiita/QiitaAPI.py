@@ -1,13 +1,14 @@
 import sys
 import json
 import requests
-
+import inspect
 from Qiita.decoders import *
 
 # this class is wrapper for Qiita API
 
 
 qiita = "https://qiita.com/api/v2/"
+
 OK = 200
 SUCCESS = 204
 RATE_LIMIT = 403
@@ -20,7 +21,7 @@ def error(msg):
     sys.stderr.write(f"{msg}")
 
 
-def log(msg, flag=True):
+def log(msg, flag=False):
     if flag:
         sys.stderr.write(f"{msg}")
 
@@ -39,6 +40,7 @@ def get_item_lgtm(item_id):
     lgtms = []
     res = requests.get(qiita + "items/" + item_id + "/likes")
     if res.status_code == RATE_LIMIT:
+        error(f"{inspect.currentframe().f_code.co_name}: late limit.")
         return None
 
     for data in res.json():
@@ -77,6 +79,7 @@ def get_comment(comment_id):
     res = requests.get(qiita + "comments/" + comment_id)
 
     if res.status_code == RATE_LIMIT:
+        error(f"{inspect.currentframe().f_code.co_name}: late limit.")
         return None
 
     return json.loads(res.text, object_hook=qiita_comment_decoder)
@@ -93,6 +96,7 @@ def get_item_comments(item_id):
     res = requests.get(qiita + "items/" + item_id + "/comments")
 
     if res.status_code == RATE_LIMIT:
+        error(f"{inspect.currentframe().f_code.co_name}: late limit.")
         return None
 
     for data in res.json():
@@ -121,6 +125,7 @@ def get_all_tags(page=1, per_page=20):
     res = requests.get(qiita + "tags?" +
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
     if res.status_code == RATE_LIMIT:
+        error(f"{inspect.currentframe().f_code.co_name}: late limit.")
         return None
 
     for data in res.json():
@@ -138,6 +143,8 @@ def get_tag(tag_id):
 
     res = requests.get(qiita + "tags/" + tag_id)
     if res.status_code == RATE_LIMIT:
+        error(f"{inspect.currentframe().f_code.co_name}: late limit.")
+
         return None
 
     return json.loads(res.text, object_hook=qiita_tag_decoder)
@@ -157,6 +164,7 @@ def get_following_tags(user_id, page=1, per_page=20):
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
 
     if res.status_code == RATE_LIMIT:
+        error(f"{inspect.currentframe().f_code.co_name}: late limit.")
         return None
 
     for data in res.json():
@@ -214,6 +222,7 @@ def get_stockers(item_id, page=1, per_page=20):
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
 
     if res.status_code == RATE_LIMIT:
+        error(f"{inspect.currentframe().f_code.co_name}: late limit.")
         return None
 
     for data in res.json():
@@ -236,6 +245,7 @@ def get_users(page=1, per_page=20):
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
 
     if res.status_code == RATE_LIMIT:
+        error(f"{inspect.currentframe().f_code.co_name}: late limit.")
         return None
     for data in res.json():
         users.append(qiita_user_decoder(data))
@@ -250,6 +260,7 @@ def get_user(user_id):
     """
     res = requests.get(qiita + "users/" + user_id)
     if res.status_code == RATE_LIMIT:
+        error(f"{inspect.currentframe().f_code.co_name}: late limit.")
         return None
 
     return json.loads(res.text, object_hook=qiita_user_decoder)
@@ -268,7 +279,9 @@ def get_followees(user_id, page=1, per_page=20):
     res = requests.get(qiita + "users/" + user_id + "/followees?" +
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
     if res.status_code == RATE_LIMIT:
+        error(f"{inspect.currentframe().f_code.co_name}: late limit.")
         return None
+
     for data in res.json():
         followees.append(qiita_user_decoder(data))
     return followees
@@ -289,7 +302,9 @@ def get_followers(user_id, page=1, per_page=20):
                        "page=" + str(page) + "&" + "per_page" + str(per_page))
 
     if res.status_code == RATE_LIMIT:
+        error(f"{inspect.currentframe().f_code.co_name}: late limit.")
         return None
+
     for data in res.json():
         followers.append(qiita_user_decoder(data))
     return followers
@@ -337,6 +352,7 @@ def get_items(page=1, per_page=100):
     res = requests.get(qiita + "items?" +
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
     if res.status_code == RATE_LIMIT:
+        error(f"{inspect.currentframe().f_code.co_name}: late limit.")
         return None
 
     for data in res.json():
@@ -361,6 +377,7 @@ def get_user_items(user_id, page=1, per_page=20):
                        "/items?" + "page=" + str(page) + "&" + "per_page=" + str(per_page))
 
     if res.status_code == RATE_LIMIT:
+        error(f"{inspect.currentframe().f_code.co_name}: late limit.")
         return None
 
     for data in res.json():
