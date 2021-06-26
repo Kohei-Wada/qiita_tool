@@ -1,7 +1,7 @@
 import json
 import requests
 
-from decoders import *
+from Qiita.decoders import *
 
 # this class is wrapper for Qiita API
 
@@ -29,6 +29,7 @@ def get_item_lgtm(item_id):
         lgtms.append(qiita_lgtm_decoder(data))
 
     return res
+
 
 ##################################################################################################################
 # ACCESS TOKEN

@@ -1,8 +1,8 @@
-from QiitaUser import QiitaUser
-from QiitaComment import QiitaComment
-from QiitaPost import QiitaPost
-from QiitaTag import QiitaTag
-from QiitaLGTM import QiitaLGTM
+from Qiita.QiitaUser import QiitaUser
+from Qiita.QiitaComment import QiitaComment
+from Qiita.QiitaPost import QiitaPost
+from Qiita.QiitaTag import QiitaTag
+from Qiita.QiitaLGTM import QiitaLGTM
 
 
 def qiita_user_decoder(obj):

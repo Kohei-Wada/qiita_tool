@@ -1,4 +1,4 @@
-import QiitaAPI
+from Qiita import QiitaAPI
 
 
 def main():
