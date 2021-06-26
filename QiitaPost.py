@@ -2,23 +2,23 @@ class QiitaPost:
     def __init__(self, rendered_body, body, coediting, comments_count,
                  created_at, group, comment_id, likes_count, private, reactions_count,
                  tags, title, updated_at, url, user, page_views_count, team_membership):
-        self.rendered_body = rendered_body
-        self.body = body
-        self.coediting = coediting
-        self.comments_count = int(comments_count)
-        self.created_at = created_at
-        self.group = group
-        self.id = comment_id
-        self.likes_count = int(likes_count)
-        self.private = private
-        self.reactions_count = reactions_count
-        self.tags = tags
-        self.title = title
-        self.updated_at = updated_at
-        self.url = url
-        self.user = user
-        self.page_views_count = page_views_count
-        self.team_membership = team_membership
+        self.rendered_body = rendered_body             # HTML body
+        self.body = body                               # Markdown format text
+        self.coediting = bool(coediting)               # Whether this articles is in co-update status
+        self.comments_count = int(comments_count)      # number of comments on this article
+        self.created_at = created_at                   # date and time when the date was created
+        self.group = group                             # represents a group of Qiita team
+        self.id = comment_id                           # unique ID of the article
+        self.likes_count = int(likes_count)            # number of "LGTM!" to this article
+        self.private = bool(private)                   # flag indicating weather it is in the limited sharing state
+        self.reactions_count = int(reactions_count)    # number of emoji reactions
+        self.tags = tags                               # list of QiitaTag object
+        self.title = title                             # article title
+        self.updated_at = updated_at                   # the date and time when the data was last updated
+        self.url = url                                 # Article URL
+        self.user = user                               # QiitaUser object
+        self.page_views_count = int(page_views_count)  # number of views
+        self.team_membership = team_membership         # represents team member information for Qiita Team
 
     ####################################################################################################################
     # getter

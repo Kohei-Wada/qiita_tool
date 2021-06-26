@@ -1,7 +1,7 @@
 class QiitaLGTM:
     def __init__(self, created_at, user):
-        self.created_at = created_at
-        self.user = user
+        self.created_at = created_at  # date and time when the data was created
+        self.user = user              # qiita user object
 
     ####################################################################################################################
     # getter
