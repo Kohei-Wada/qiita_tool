@@ -17,7 +17,7 @@ class QiitaPost:
         self.updated_at = updated_at                   # the date and time when the data was last updated
         self.url = url                                 # Article URL
         self.user = user                               # QiitaUser object
-        self.page_views_count = int(page_views_count)  # number of views
+        self.page_views_count = page_views_count       # number of views
         self.team_membership = team_membership         # represents team member information for Qiita Team
 
     ####################################################################################################################
@@ -53,7 +53,6 @@ class QiitaPost:
     def get_reactions_count(self):
         return self.reactions_count
 
-    # TODO fix to return tag object list
     def get_tags(self):
         return self.tags
 

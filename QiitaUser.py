@@ -5,8 +5,8 @@ class QiitaUser:
                  permanent_id, profile_image_url, team_only, twitter_screen_name, website_url):
         self.description = description                  # self introduction
         self.facebook_id = facebook_id                  # Facebook ID
-        self.followers_count = int(followers_count)     # number of users this user is following
         self.followees_count = int(followees_count)     # number of users following this user
+        self.followers_count = int(followers_count)     # number of users this user is following
         self.github_login_name = github_login_name      # GitHub ID
         self.id = user_id                               # User ID
         self.items_count = int(items_count)             # number of articles published by this user on qiita.com

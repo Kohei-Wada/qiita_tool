@@ -2,9 +2,8 @@ import QiitaAPI
 
 
 def main():
-    items = QiitaAPI.get_user_items("drken")
-    for item in items:
-        print(item.get_likes_count())
+    user = QiitaAPI.get_user("program3152019")
+    print(user.get_followers_count())
 
 
 if __name__ == '__main__':
