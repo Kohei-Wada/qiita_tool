@@ -121,6 +121,13 @@ def get_all_tags(page=1, per_page=20):
     :param per_page: number of QiitaTag objects  per page
     :return: list of QiitaTag objects
     """
+
+    if page < 0 or page > 100:
+        page = 20
+
+    if per_page < 0 or per_page > 100:
+        per_page = 20
+
     tags = []
     res = requests.get(qiita + "tags?" +
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
@@ -159,6 +166,12 @@ def get_following_tags(user_id, page=1, per_page=20):
     :param per_page: number of QiitaTag objects per page
     :return: list of QiitaTag object
     """
+    if page < 0 or page > 100:
+        page = 20
+
+    if per_page < 0 or per_page > 100:
+        per_page = 20
+
     tags = []
     res = requests.get(qiita + "users/" + user_id + "/following_tags?" +
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
@@ -216,6 +229,11 @@ def get_stockers(item_id, page=1, per_page=20):
     :param per_page: list of QiitaUser objects
     :return:
     """
+    if page < 0 or page > 100:
+        page = 20
+
+    if per_page < 0 or per_page > 100:
+        per_page = 20
 
     stockers = []
     res = requests.get(qiita + "items/" + item_id + "/stockers?" +
@@ -240,6 +258,12 @@ def get_users(page=1, per_page=20):
     :param per_page: number of QiitaUser objects per page
     :return: list of QiitaUser objects
     """
+    if page < 0 or page > 100:
+        page = 20
+
+    if per_page < 0 or per_page > 100:
+        per_page = 20
+
     users = []
     res = requests.get(qiita + "users?" +
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
@@ -275,6 +299,12 @@ def get_followees(user_id, page=1, per_page=20):
     :param per_page: number of QiitaUser objects per page
     :return: list of QiitaUser objects
     """
+    if page < 0 or page > 100:
+        page = 20
+
+    if per_page < 0 or per_page > 100:
+        per_page = 20
+
     followees = []
     res = requests.get(qiita + "users/" + user_id + "/followees?" +
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
@@ -296,6 +326,11 @@ def get_followers(user_id, page=1, per_page=20):
     :param per_page: number of QiitaUser objects per page
     :return: list of QiitaUser objects
     """
+    if page < 0 or page > 100:
+        page = 20
+
+    if per_page < 0 or per_page > 100:
+        per_page = 20
 
     followers = []
     res = requests.get(qiita + "users/" + user_id + "/followers?" +
@@ -339,7 +374,7 @@ def follow(user_id):
 # POST(ITEM) : represents a post from a user
 
 
-def get_items(page=1, per_page=100):
+def get_items(page=1, per_page=20):
     """
     get the list of article object in descending order
     of creation date and time.
@@ -347,6 +382,11 @@ def get_items(page=1, per_page=100):
     :param per_page: number of QiitaPost objects per page
     :return: list of QiitaPost objects
     """
+    if page < 0 or page > 100:
+        page = 20
+
+    if per_page < 0 or per_page > 100:
+        per_page = 20
 
     items = []
     res = requests.get(qiita + "items?" +
@@ -371,6 +411,11 @@ def get_user_items(user_id, page=1, per_page=20):
     :param per_page: number of QiitaPost objects per page
     :return: list of QiitaPost objects
     """
+    if page < 0 or page > 100:
+        page = 20
+
+    if per_page < 0 or per_page > 100:
+        per_page = 20
 
     items = []
     res = requests.get(qiita + "users/" + user_id +
