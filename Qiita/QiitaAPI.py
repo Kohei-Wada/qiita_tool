@@ -1,3 +1,4 @@
+import sys
 import json
 import requests
 
@@ -11,15 +12,30 @@ OK = 200
 SUCCESS = 204
 RATE_LIMIT = 403
 
+
+##################################################################################################################
+# control debug error logging
+
+def error(msg):
+    sys.stderr.write(f"{msg}")
+
+
+def log(msg, flag=True):
+    if flag:
+        sys.stderr.write(f"{msg}")
+
+
 ##################################################################################################################
 # LGTM
 
-"""
-get a list of "LGTM!" that attached article in descending order
-"""
-
 
 def get_item_lgtm(item_id):
+    """
+    get a list of "LGTM!" that attached article in descending order
+    :param item_id: unique ID of the "LGTM!"
+    :return:
+    """
+
     lgtms = []
     res = requests.get(qiita + "items/" + item_id + "/likes")
     if res.status_code == RATE_LIMIT:
@@ -41,22 +57,23 @@ def get_item_lgtm(item_id):
 # COMMENT
 
 
-"""
-delete the comment
-"""
-
-
 def delete_comment(comment_id):
+    """
+    delete the comment
+    :param comment_id: unique ID of the comment
+    :return: bool
+    """
+
     requests.delete(qiita + "comments/" + comment_id)
     return
 
 
-"""
-get a comment object
-"""
-
-
 def get_comment(comment_id):
+    """
+    get a comment object
+    :param comment_id: unique ID of the comment
+    :return: QiitaComment object
+    """
     res = requests.get(qiita + "comments/" + comment_id)
 
     if res.status_code == RATE_LIMIT:
@@ -65,12 +82,13 @@ def get_comment(comment_id):
     return json.loads(res.text, object_hook=qiita_comment_decoder)
 
 
-"""
-get the list of comment object attached to item.
-"""
-
-
 def get_item_comments(item_id):
+    """
+    get the list of comment object attached to the item.
+
+    :param item_id: unique ID of the article
+    :return: list of QiitaComment objects
+    """
     comments = []
     res = requests.get(qiita + "items/" + item_id + "/comments")
 
@@ -89,13 +107,16 @@ def get_item_comments(item_id):
 ##################################################################################################################
 # TAG
 
-"""
-get the tag object list in descending order 
-of creation date and time.
-"""
-
 
 def get_all_tags(page=1, per_page=20):
+    """
+    get the QiitaTag objects list in descending order
+    of creation date and time.
+
+    :param page: index of page
+    :param per_page: number of QiitaTag objects  per page
+    :return: list of QiitaTag objects
+    """
     tags = []
     res = requests.get(qiita + "tags?" +
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
@@ -108,12 +129,13 @@ def get_all_tags(page=1, per_page=20):
     return tags
 
 
-"""
-get the tag object.
-"""
-
-
 def get_tag(tag_id):
+    """
+    get QiitaTag object
+    :param tag_id: unique ID of the tag
+    :return: QiitaTag object
+    """
+
     res = requests.get(qiita + "tags/" + tag_id)
     if res.status_code == RATE_LIMIT:
         return None
@@ -121,12 +143,15 @@ def get_tag(tag_id):
     return json.loads(res.text, object_hook=qiita_tag_decoder)
 
 
-"""
-get the list of tag object that is followd by user
-"""
-
-
 def get_following_tags(user_id, page=1, per_page=20):
+    """
+    get the list of tag object that is followed by user
+
+    :param user_id: unique ID of the user
+    :param page: index of the page
+    :param per_page: number of QiitaTag objects per page
+    :return: list of QiitaTag object
+    """
     tags = []
     res = requests.get(qiita + "users/" + user_id + "/following_tags?" +
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
@@ -140,22 +165,25 @@ def get_following_tags(user_id, page=1, per_page=20):
     return tags
 
 
-"""
-unfollow the tag. if successful, return true.
-"""
+def unfollow_tag(tag_id):
+    """
+    unfollow the tag. if successful , return true.
 
-
-def unfollow_tag(self, tag_id):
-    res = requests.delete(self.qiita + "tags/" + tag_id + "/following")
-    return res.status_code == self.success
-
-
-"""
-follow the tag
-"""
+    :param tag_id: unique ID of the tag
+    :return: bool
+    """
+    res = requests.delete(qiita + "tags/" + tag_id + "/following")
+    return res.status_code == SUCCESS
 
 
 def follow_tag(tag_id):
+    """
+    follow the tag. if successful , return true.
+
+    :param tag_id: unique ID of the tag
+    :return: bool
+    """
+
     res = requests.put(qiita + "tags/" + tag_id + "following")
     return res.status_code == SUCCESS
 
@@ -169,13 +197,18 @@ def follow_tag(tag_id):
 ##################################################################################################################
 # USER
 
-"""
-get the list of users who have stacked articles 
-in descending order of stack date and time.
-"""
-
 
 def get_stockers(item_id, page=1, per_page=20):
+    """
+    get the list of QiitaUser object that have stocked articles
+    int descending order of stock date and time.
+
+    :param item_id: unique ID of the article
+    :param page: index of the page
+    :param per_page: list of QiitaUser objects
+    :return:
+    """
+
     stockers = []
     res = requests.get(qiita + "items/" + item_id + "/stockers?" +
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
@@ -189,13 +222,15 @@ def get_stockers(item_id, page=1, per_page=20):
     return stockers
 
 
-"""
-get the list of all user object in descending order
-of creation date and time.
-"""
-
-
 def get_users(page=1, per_page=20):
+    """
+    get the list of QiitaUser object in descending order
+    of creation date and time.
+
+    :param page: index of a page
+    :param per_page: number of QiitaUser objects per page
+    :return: list of QiitaUser objects
+    """
     users = []
     res = requests.get(qiita + "users?" +
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
@@ -207,12 +242,12 @@ def get_users(page=1, per_page=20):
     return users
 
 
-"""
-get the qiita user object.
-"""
-
-
 def get_user(user_id):
+    """
+    get the QiitaUser object
+    :param user_id: unique ID of the user
+    :return: QiitaUser object
+    """
     res = requests.get(qiita + "users/" + user_id)
     if res.status_code == RATE_LIMIT:
         return None
@@ -220,12 +255,15 @@ def get_user(user_id):
     return json.loads(res.text, object_hook=qiita_user_decoder)
 
 
-"""
-get the list of qiita user objects that the user is following.
-"""
-
-
 def get_followees(user_id, page=1, per_page=20):
+    """
+    get the list of QiitaUser objects that is followed by the user
+
+    :param user_id: unique ID of the user
+    :param page: index of the page
+    :param per_page: number of QiitaUser objects per page
+    :return: list of QiitaUser objects
+    """
     followees = []
     res = requests.get(qiita + "users/" + user_id + "/followees?" +
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
@@ -236,12 +274,16 @@ def get_followees(user_id, page=1, per_page=20):
     return followees
 
 
-"""
-get the list of user object who are following the users.
-"""
-
-
 def get_followers(user_id, page=1, per_page=20):
+    """
+    get the list of QiitaUser objects that is following the user
+
+    :param user_id: unique ID of the user
+    :param page: index of the page
+    :param per_page: number of QiitaUser objects per page
+    :return: list of QiitaUser objects
+    """
+
     followers = []
     res = requests.get(qiita + "users/" + user_id + "/followers?" +
                        "page=" + str(page) + "&" + "per_page" + str(per_page))
@@ -253,12 +295,12 @@ def get_followers(user_id, page=1, per_page=20):
     return followers
 
 
-"""
-unfollowing the user, if successful, return true.
-"""
-
-
 def unfollow(user_id):
+    """
+    unfollow the user. if successful, return true.
+    :param user_id: unique ID of the user
+    :return: bool
+    """
     res = requests.delete(qiita + "users/" + user_id + "/following")
     return res.status_code == SUCCESS
 
@@ -267,12 +309,13 @@ def is_following():
     return
 
 
-"""
-follow the user. if success, return true.
-"""
-
-
 def follow(user_id):
+    """
+    follow the user. if successful, return true.
+    :param user_id: unique ID of the user
+    :return: bool
+    """
+
     res = requests.put(qiita + "users/" + user_id + "/following")
     return res.status_code == SUCCESS
 
@@ -280,13 +323,16 @@ def follow(user_id):
 ##################################################################################################################
 # POST(ITEM) : represents a post from a user
 
-"""
-get the list of article object in descending order
-of creation date and time.
-"""
-
 
 def get_items(page=1, per_page=100):
+    """
+    get the list of article object in descending order
+    of creation date and time.
+    :param page: index of the page
+    :param per_page: number of QiitaPost objects per page
+    :return: list of QiitaPost objects
+    """
+
     items = []
     res = requests.get(qiita + "items?" +
                        "page=" + str(page) + "&" + "per_page=" + str(per_page))
@@ -299,13 +345,17 @@ def get_items(page=1, per_page=100):
     return items
 
 
-"""
-get the article object list of the specified user
-in descending order of creation date and time
-"""
-
-
 def get_user_items(user_id, page=1, per_page=20):
+    """
+    get the article object list of the specified user
+    in descending order of creation date and time
+
+    :param user_id: unique ID of the user
+    :param page: index of the page
+    :param per_page: number of QiitaPost objects per page
+    :return: list of QiitaPost objects
+    """
+
     items = []
     res = requests.get(qiita + "users/" + user_id +
                        "/items?" + "page=" + str(page) + "&" + "per_page=" + str(per_page))
