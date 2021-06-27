@@ -18,7 +18,7 @@ RATE_LIMIT = 403
 # control debug error logging
 
 def error(msg):
-    sys.stderr.write(f"{msg}")
+    sys.stderr.write(f"{msg}\n")
 
 
 def log(msg, flag=False):
